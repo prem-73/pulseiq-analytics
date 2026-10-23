@@ -32,11 +32,11 @@ CREATE OR REPLACE VIEW metric_catalog AS SELECT * FROM (VALUES
 ) AS t(metric_name, definition, source, owner);
 
 CREATE OR REPLACE VIEW metric_headcount AS SELECT COUNT(DISTINCT employee_id) AS employee_count FROM dim_employee WHERE is_current = TRUE;
-CREATE OR REPLACE VIEW metric_headcount_by_department AS SELECT department, COUNT(*) AS employee_count FROM employees GROUP BY department;
+CREATE OR REPLACE VIEW metric_headcount_by_department AS SELECT d.department_name AS department, COUNT(DISTINCT e.employee_id) AS employee_count FROM dim_employee e JOIN dim_department d USING (department_key) WHERE e.is_current = TRUE GROUP BY d.department_name;
 CREATE OR REPLACE VIEW metric_average_age AS SELECT AVG(TRY_CAST(age AS DOUBLE)) AS average_age FROM employees;
 CREATE OR REPLACE VIEW metric_minimum_age AS SELECT MIN(age) AS minimum_age FROM employees;
 CREATE OR REPLACE VIEW metric_maximum_age AS SELECT MAX(age) AS maximum_age FROM employees;
-CREATE OR REPLACE VIEW metric_department_count AS SELECT COUNT(DISTINCT department) AS department_count FROM employees;
+CREATE OR REPLACE VIEW metric_department_count AS SELECT COUNT(DISTINCT d.department_name) AS department_count FROM dim_employee e JOIN dim_department d USING (department_key) WHERE e.is_current = TRUE;
 CREATE OR REPLACE VIEW metric_salary_total AS SELECT SUM(TRY_CAST(salary_amount AS DOUBLE)) AS salary_total FROM salaries;
 CREATE OR REPLACE VIEW metric_salary_average AS SELECT AVG(TRY_CAST(salary_amount AS DOUBLE)) AS average_salary FROM salaries;
 CREATE OR REPLACE VIEW metric_salary_minimum AS SELECT MIN(TRY_CAST(salary_amount AS DOUBLE)) AS minimum_salary FROM salaries;
@@ -59,3 +59,4 @@ CREATE OR REPLACE VIEW metric_payroll_deductions_total AS SELECT SUM(TRY_CAST(de
 CREATE OR REPLACE VIEW metric_payroll_net_total AS SELECT SUM(TRY_CAST(net_pay AS DOUBLE)) AS net_pay_total FROM payroll;
 CREATE OR REPLACE VIEW metric_payroll_average_net AS SELECT AVG(TRY_CAST(net_pay AS DOUBLE)) AS average_net_pay FROM payroll;
 CREATE OR REPLACE VIEW metric_payroll_by_period AS SELECT pay_period, SUM(TRY_CAST(gross_pay AS DOUBLE)) AS gross_pay, SUM(TRY_CAST(deductions AS DOUBLE)) AS deductions, SUM(TRY_CAST(net_pay AS DOUBLE)) AS net_pay FROM payroll GROUP BY pay_period;
+CREATE OR REPLACE VIEW metric_headcount_monthly AS WITH months AS (SELECT CAST(date_trunc('month', full_date) + INTERVAL '1 month' - INTERVAL '1 day' AS DATE) AS month_end FROM dim_date GROUP BY 1) SELECT m.month_end, COUNT(DISTINCT e.employee_id) AS employee_count FROM months m LEFT JOIN dim_employee e ON e.effective_from <= m.month_end AND e.effective_to > m.month_end GROUP BY m.month_end ORDER BY m.month_end;
