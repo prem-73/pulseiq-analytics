@@ -1,0 +1,177 @@
+{
+  "employees": {
+    "file": "employees.csv",
+    "columns": {
+      "employee_id": {
+        "type": "integer",
+        "nullable": false,
+        "min": 1,
+        "unique": true
+      },
+      "employee_name": {
+        "type": "string",
+        "nullable": false,
+        "min_length": 1
+      },
+      "department": {
+        "type": "string",
+        "nullable": false,
+        "allowed_values": [
+          "IT",
+          "HR",
+          "Finance",
+          "Operations"
+        ]
+      },
+      "age": {
+        "type": "integer",
+        "nullable": false,
+        "min": 18,
+        "max": 65
+      },
+      "email": {
+        "type": "string",
+        "nullable": false,
+        "contains": "@"
+      }
+    }
+  },
+  "salaries": {
+    "file": "salaries.csv",
+    "columns": {
+      "salary_id": {
+        "type": "integer",
+        "nullable": false,
+        "min": 1,
+        "unique": true
+      },
+      "employee_id": {
+        "type": "integer",
+        "nullable": false,
+        "min": 1
+      },
+      "salary_amount": {
+        "type": "number",
+        "nullable": false,
+        "min": 0
+      },
+      "effective_date": {
+        "type": "date",
+        "nullable": false
+      }
+    }
+  },
+  "attendance": {
+    "file": "attendance.csv",
+    "columns": {
+      "attendance_id": {
+        "type": "integer",
+        "nullable": false,
+        "min": 1,
+        "unique": true
+      },
+      "employee_id": {
+        "type": "integer",
+        "nullable": false,
+        "min": 1
+      },
+      "attendance_date": {
+        "type": "date",
+        "nullable": false
+      },
+      "status": {
+        "type": "string",
+        "nullable": false,
+        "allowed_values": [
+          "Present",
+          "Absent",
+          "Leave",
+          "Holiday"
+        ]
+      },
+      "hours_worked": {
+        "type": "number",
+        "nullable": false,
+        "min": 0,
+        "max": 24
+      }
+    }
+  },
+  "leave": {
+    "file": "leave.csv",
+    "columns": {
+      "leave_id": {
+        "type": "integer",
+        "nullable": false,
+        "min": 1,
+        "unique": true
+      },
+      "employee_id": {
+        "type": "integer",
+        "nullable": false,
+        "min": 1
+      },
+      "leave_type": {
+        "type": "string",
+        "nullable": false,
+        "allowed_values": [
+          "Casual",
+          "Sick",
+          "Annual"
+        ]
+      },
+      "start_date": {
+        "type": "date",
+        "nullable": false
+      },
+      "end_date": {
+        "type": "date",
+        "nullable": false
+      },
+      "status": {
+        "type": "string",
+        "nullable": false,
+        "allowed_values": [
+          "Approved",
+          "Pending",
+          "Rejected"
+        ]
+      }
+    }
+  },
+  "payroll": {
+    "file": "payroll.csv",
+    "columns": {
+      "payroll_id": {
+        "type": "integer",
+        "nullable": false,
+        "min": 1,
+        "unique": true
+      },
+      "employee_id": {
+        "type": "integer",
+        "nullable": false,
+        "min": 1
+      },
+      "pay_period": {
+        "type": "string",
+        "nullable": false
+      },
+      "gross_pay": {
+        "type": "number",
+        "nullable": false,
+        "min": 0
+      },
+      "deductions": {
+        "type": "number",
+        "nullable": false,
+        "min": 0
+      },
+      "net_pay": {
+        "type": "number",
+        "nullable": false,
+        "min": 0
+      }
+    }
+  }
+}
