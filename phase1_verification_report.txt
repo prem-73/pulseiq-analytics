@@ -1,0 +1,161 @@
+PULSEIQ PHASE 1 - FINAL VERIFICATION REPORT
+Generated: 2026-10-24 15:38:58
+Project: C:\Users\P.Prem Kumar\Downloads\pulseiq
+
+=================================================================
+TASK 1 - ETL PIPELINE
+=================================================================
+build_metrics.py: FOUND
+etl.py: FOUND
+load_to_duckdb.py: FOUND
+DuckDB database: FOUND
+
+=================================================================
+TASK 1 - ETL SUMMARY
+=================================================================
+table_name  rows_in  rows_passed  rows_quarantined
+attendance      100          100                 0
+ employees      100           85                15
+     leave      100          100                 0
+   payroll      100          100                 0
+  salaries      100          100                 0
+
+=================================================================
+TASK 2 - STAR SCHEMA
+=================================================================
+PASS - dim_employee: 100 rows
+PASS - dim_department: 5 rows
+PASS - dim_date: 47 rows
+PASS - fact_attendance: 100 rows
+PASS - fact_leave: 100 rows
+PASS - fact_payroll: 100 rows
+PASS - fact_salary: 100 rows
+
+=================================================================
+TASK 3 - DATA QUALITY
+=================================================================
+                  check_name      table_name severity  bad_rows status
+      attendance_hours_range      attendance critical         0   PASS
+   attendance_status_allowed      attendance critical         0   PASS
+         employees_age_range       employees critical         0   PASS
+employees_department_allowed       employees critical         0   PASS
+      employees_email_format       employees  warning         0   PASS
+employees_employee_id_unique       employees critical         0   PASS
+   employees_required_fields       employees critical         0   PASS
+         leave_dates_ordered           leave critical         0   PASS
+        leave_status_allowed           leave critical         0   PASS
+     payroll_math_consistent         payroll critical         0   PASS
+   salary_amount_nonnegative        salaries critical         0   PASS
+            salary_id_unique        salaries critical         0   PASS
+  fact_employee_keys_resolve warehouse facts critical         0   PASS
+   fact_row_counts_reconcile warehouse facts critical         0   PASS
+
+Quarantine summary:
+source_table  quarantined_rows
+   employees                15
+
+=================================================================
+TASK 4 - METRIC CATALOG
+=================================================================
+                    metric_name                                                definition                  source                owner
+          metric_absent_records                          Attendance records marked Absent              attendance Workforce Operations
+         metric_approved_leaves                                   Approved leave requests                   leave Workforce Operations
+    metric_attendance_by_status                              Attendance records by status              attendance Workforce Operations
+         metric_attendance_rate Present records divided by non-holiday attendance records              attendance Workforce Operations
+      metric_attendance_records                                  Total attendance records              attendance Workforce Operations
+             metric_average_age                                      Average employee age               employees         HR Analytics
+        metric_department_count                         Number of represented departments               employees         HR Analytics
+               metric_headcount                                    Current employee count               employees         HR Analytics
+ metric_headcount_by_department                              Employee count by department               employees         HR Analytics
+    metric_hours_worked_average                       Average hours per attendance record              attendance Workforce Operations
+      metric_hours_worked_total                               Total recorded hours worked              attendance Workforce Operations
+    metric_leave_days_requested                 Total calendar days across leave requests                   leave Workforce Operations
+          metric_leave_requests                                      Total leave requests                   leave Workforce Operations
+             metric_maximum_age                                      Maximum employee age               employees         HR Analytics
+             metric_minimum_age                                      Minimum employee age               employees         HR Analytics
+     metric_payroll_average_net                        Average net pay per payroll record                 payroll              Finance
+       metric_payroll_by_period               Gross, deductions and net pay by pay period                 payroll              Finance
+metric_payroll_deductions_total                                  Total payroll deductions                 payroll              Finance
+     metric_payroll_gross_total                                       Total gross payroll                 payroll              Finance
+       metric_payroll_net_total                                         Total net payroll                 payroll              Finance
+          metric_pending_leaves                                    Pending leave requests                   leave Workforce Operations
+         metric_present_records                         Attendance records marked Present              attendance Workforce Operations
+         metric_rejected_leaves                                   Rejected leave requests                   leave Workforce Operations
+          metric_salary_average                                     Average salary amount                salaries         Compensation
+    metric_salary_by_department                                Salary total by department salaries + dim_employee         Compensation
+          metric_salary_maximum                                     Maximum salary amount                salaries         Compensation
+          metric_salary_minimum                                     Minimum salary amount                salaries         Compensation
+            metric_salary_total                     Total salary amount in salary records                salaries         Compensation
+Catalog entries: 28
+
+=================================================================
+TASK 4 - KEY METRICS
+=================================================================
+
+--- Headcount ---
+ employee_count
+            100
+QUERY: PASS
+
+--- Department Count ---
+ department_count
+                5
+QUERY: PASS
+
+--- Headcount by Department ---
+department  employee_count
+        IT              25
+        HR              20
+Operations              20
+   Finance              20
+ Marketing              15
+QUERY: PASS
+
+--- Salary Total ---
+ salary_total
+    4530000.0
+QUERY: PASS
+
+--- Present Records ---
+ present_records
+              70
+QUERY: PASS
+
+--- Approved Leaves ---
+ approved_leaves
+              50
+QUERY: PASS
+
+--- Net Payroll Total ---
+ net_pay_total
+     4260000.0
+QUERY: PASS
+
+--- Monthly Headcount ---
+ month_end  employee_count
+2026-01-31             100
+2026-09-30             100
+2026-10-31             100
+QUERY: PASS
+
+
+=================================================================
+TASK 5 - DASHBOARD
+=================================================================
+app.py: FOUND
+pages/1_Workforce_Overview.py: FOUND
+Dashboard Python syntax: PASS
+
+=================================================================
+GIT STATUS
+=================================================================
+## main...origin/main
+
+
+=================================================================
+FINAL NOTES
+=================================================================
+This report shows actual local database and file checks.
+Existing tables do not by themselves prove ETL or relationships are correct.
+Location Tier and Work Mode need verified source data and metric definitions.
+Historical headcount should not be interpreted as change unless source history supports it.
