@@ -1,0 +1,20 @@
+{
+  "dataset": "External IBM HR attrition dataset",
+  "dataset_rows": 1470,
+  "training_rows": 1102,
+  "test_rows": 368,
+  "positive_attrition_records": 237,
+  "accuracy": 0.7744565217391305,
+  "precision": 0.37755102040816324,
+  "recall": 0.6271186440677966,
+  "f1_score": 0.4713375796178344,
+  "roc_auc": 0.8101036695738029,
+  "threshold": 0.5,
+  "random_state": 42,
+  "limitations": [
+    "External dataset, not the internship company's actual workforce.",
+    "No confirmed exit dates or voluntary/involuntary exit types.",
+    "Test results do not establish performance on a new company.",
+    "Predicted probabilities are estimates, not certainties."
+  ]
+}
