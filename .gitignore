@@ -12,3 +12,19 @@ data/external/
 data/task8/
 
 unlock_PQ-09_reconciliation_answer_key.csv
+# Financial and source data
+budget_payroll_dept_month.csv
+dim_account.csv
+dim_client.csv
+dim_department.csv
+dim_vendor.csv
+fact_expense.csv
+fact_invoice.csv
+fact_invoice_payment.csv
+fact_ledger.csv
+fact_payroll.csv
+kpi_targets.csv
+
+# Reference and data-quality files
+unlock_PQ-03_dq_known_issues.csv
+unlock_PQ-13_reference_summary_dept_month.csv
