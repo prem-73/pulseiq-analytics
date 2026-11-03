@@ -1,0 +1,11 @@
+department_key,year,month,department_name,gross_pay,net_pay,payroll_records,employees_paid,attendance_records,employees_with_attendance,present_records,absent_records,leave_attendance_records,total_hours_worked,approved_leave_days,employees_taking_approved_leave,current_headcount,month_label,attendance_rate_pct,leave_days_per_head,overtime_cost,overtime_hours,late_arrivals,monthly_exits,monthly_attrition_rate_pct
+1,2026,9,Finance,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,8,8,20,2026-09,,0.4,,,,,
+2,2026,9,HR,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,6,3,20,2026-09,,0.3,,,,,
+3,2026,9,IT,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,10,5,25,2026-09,,0.4,,,,,
+4,2026,9,Marketing,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,2,1,15,2026-09,,0.13333333333333333,,,,,
+5,2026,9,Operations,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,6,4,20,2026-09,,0.3,,,,,
+1,2026,10,Finance,930000.0,884000.0,20.0,20.0,20.0,20.0,20.0,0.0,0.0,159.5,11,9,20,2026-10,100.0,0.55,,,,,
+2,2026,10,HR,950000.0,904000.0,20.0,20.0,20.0,20.0,15.0,0.0,5.0,119.0,13,5,20,2026-10,75.0,0.65,,,,,
+3,2026,10,IT,1125000.0,1075000.0,25.0,25.0,25.0,25.0,20.0,0.0,5.0,158.5,7,6,25,2026-10,80.0,0.28,,,,,
+4,2026,10,Marketing,655000.0,623000.0,15.0,15.0,15.0,15.0,15.0,0.0,0.0,118.5,7,3,15,2026-10,100.0,0.4666666666666667,,,,,
+5,2026,10,Operations,830000.0,774000.0,20.0,20.0,20.0,20.0,0.0,20.0,0.0,0.0,13,7,20,2026-10,0.0,0.65,,,,,
