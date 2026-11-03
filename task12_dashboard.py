@@ -12,6 +12,7 @@ FILES = {
     "invoice": "fact_invoice.csv",
     "payment": "fact_invoice_payment.csv",
     "client": "dim_client.csv",
+    "expense": "fact_expense.csv",
 }
 
 @st.cache_data
@@ -23,6 +24,7 @@ def load_data():
     invoice = pd.read_csv(FILES["invoice"])
     payment = pd.read_csv(FILES["payment"])
     client = pd.read_csv(FILES["client"])
+    expense = pd.read_csv(FILES["expense"])
 
     for c in ["invoice_date", "due_date", "last_payment_date"]:
         invoice[c] = pd.to_datetime(invoice[c], errors="coerce")
@@ -30,6 +32,12 @@ def load_data():
     for c in ["total_amount", "amount_paid", "balance_due", "days_past_due_at_cutoff", "days_to_pay"]:
         invoice[c] = pd.to_numeric(invoice[c], errors="coerce")
     payment["amount"] = pd.to_numeric(payment["amount"], errors="coerce").fillna(0)
+
+    # Cash out is measured from expense-register records with a confirmed paid status/date.
+    expense["paid_date"] = pd.to_datetime(expense["paid_date"], errors="coerce")
+    expense["status"] = expense["status"].astype(str).str.strip().str.upper()
+    expense["total_amount"] = pd.to_numeric(expense["total_amount"], errors="coerce").fillna(0)
+    expense["expense_id"] = expense["expense_id"].astype(str)
 
     invoice["status"] = invoice["status"].astype(str).str.strip().str.upper()
     # Open statuses are exactly those specified in the task brief.
@@ -52,10 +60,10 @@ def load_data():
         client[["client_id", "client_name", "payment_terms_days", "payment_behaviour"]],
         on="client_id", how="left", validate="many_to_one"
     )
-    return invoice, payment, client, open_inv, invoice_client
+    return invoice, payment, client, open_inv, invoice_client, expense
 
 try:
-    invoice, payment, clients, open_inv, invoice_client = load_data()
+    invoice, payment, clients, open_inv, invoice_client, expense = load_data()
 except Exception as exc:
     st.error(str(exc))
     st.stop()
@@ -123,15 +131,70 @@ st.dataframe(overdue_clients.head(10).rename(columns={
     "overdue_days_max":"Maximum days past due","open_invoice_count":"Open invoices"
 }).style.format({"Outstanding":"₹{:,.2f}"}), use_container_width=True, hide_index=True)
 
-st.subheader("Cash received by month")
+st.subheader("Cash in versus cash out by month")
 cash_in = payment.dropna(subset=["payment_date"]).copy()
 cash_in["month"] = cash_in["payment_date"].dt.to_period("M").astype(str)
-cash_month = cash_in.groupby("month", as_index=False).agg(cash_in=("amount","sum"))
-st.plotly_chart(px.bar(cash_month, x="month", y="cash_in", title="Cash in – customer payments received",
-                       labels={"month":"Month","cash_in":"Cash received (₹)"}),
-                use_container_width=True)
+cash_in_month = cash_in.groupby("month", as_index=False).agg(cash_in=("amount", "sum"))
 
-st.warning("Cash out is not present in the three supplied Task 12 files. Invoice and payment data prove customer cash receipts, but do not prove supplier/payroll/operating cash payments. Upload an approved cash-disbursement or bank-transaction source to complete cash-in versus cash-out; do not treat expense accruals as cash outflows.")
+cash_out = expense[
+    expense["status"].eq("PAID") & expense["paid_date"].notna()
+].copy()
+cash_out["month"] = cash_out["paid_date"].dt.to_period("M").astype(str)
+cash_out_month = cash_out.groupby("month", as_index=False).agg(
+    cash_out=("total_amount", "sum"),
+    paid_expense_count=("expense_id", "nunique")
+)
+
+cash_month = cash_in_month.merge(cash_out_month, on="month", how="outer").fillna(0)
+cash_month["net_cash_movement"] = cash_month["cash_in"] - cash_month["cash_out"]
+cash_month = cash_month.sort_values("month")
+
+if not cash_month.empty:
+    cash_long = cash_month.melt(
+        id_vars="month", value_vars=["cash_in", "cash_out"],
+        var_name="cash_flow_type", value_name="amount"
+    )
+    st.plotly_chart(
+        px.bar(cash_long, x="month", y="amount", color="cash_flow_type", barmode="group",
+               title="Monthly cash in versus paid expense cash out",
+               labels={"month": "Month", "amount": "Amount (₹)",
+                       "cash_flow_type": "Cash flow"}),
+        use_container_width=True
+    )
+    st.dataframe(
+        cash_month.rename(columns={
+            "month": "Month", "cash_in": "Cash in",
+            "cash_out": "Cash out (paid expenses)",
+            "paid_expense_count": "Paid expense records",
+            "net_cash_movement": "Net cash movement"
+        }).style.format({
+            "Cash in": "₹{:,.2f}",
+            "Cash out (paid expenses)": "₹{:,.2f}",
+            "Net cash movement": "₹{:,.2f}"
+        }),
+        use_container_width=True, hide_index=True
+    )
+    total_cash_in = float(cash_month["cash_in"].sum())
+    total_cash_out = float(cash_month["cash_out"].sum())
+    total_net_cash = total_cash_in - total_cash_out
+    m1, m2, m3 = st.columns(3)
+    m1.metric("Total cash in", f"₹{total_cash_in:,.2f}")
+    m2.metric("Cash out – paid expense register", f"₹{total_cash_out:,.2f}")
+    m3.metric("Net movement (these sources)", f"₹{total_net_cash:,.2f}")
+    st.success(
+        f"Cash-out source check: {int(len(cash_out)):,} expense records marked PAID "
+        f"with a payment date; total paid expense amount ₹{total_cash_out:,.2f}."
+    )
+else:
+    st.warning("No dated cash-in or paid-expense records were available for monthly comparison.")
+
+st.warning(
+    "Scope note: cash in comes from customer invoice payments. Cash out comes from fact_expense "
+    "records where status = PAID and paid_date is present, using total_amount (including GST). "
+    "This completes the available expense-register cash comparison, but it is not a full company "
+    "cash-flow statement: payroll, tax, loan, capital expenditure and other bank disbursements "
+    "are not included unless they are represented in this expense register."
+)
 
 st.subheader("Invoice status summary")
 status_summary = invoice.groupby("status", as_index=False).agg(
@@ -144,6 +207,15 @@ st.dataframe(status_summary.rename(columns={
     "outstanding":"Outstanding"
 }).style.format({"Invoice value":"₹{:,.2f}","Outstanding":"₹{:,.2f}"}),
 use_container_width=True, hide_index=True)
+
+st.subheader("Cash-out data quality checks")
+paid_expense_missing_date = int((expense["status"].eq("PAID") & expense["paid_date"].isna()).sum())
+unpaid_with_date = int((~expense["status"].eq("PAID") & expense["paid_date"].notna()).sum())
+st.write(
+    f"Expense register: {len(expense):,} rows | PAID with payment date: "
+    f"{len(cash_out):,} | PAID missing payment date: {paid_expense_missing_date:,} | "
+    f"Non-PAID with payment date: {unpaid_with_date:,}"
+)
 
 st.subheader("Data quality checks")
 payment_invoice_ids = set(payment["invoice_id"].dropna())
