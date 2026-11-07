@@ -1,8 +1,8 @@
-from pathlib import Path
+﻿from pathlib import Path
 from datetime import datetime, timezone
 import duckdb
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[1]
 DB = ROOT / "pulseiq.duckdb"
 
 # Each SQL query returns the number of bad rows. Critical checks fail the run; warnings are recorded.
@@ -55,3 +55,4 @@ def main():
     finally: con.close()
 
 if __name__=="__main__": main()
+

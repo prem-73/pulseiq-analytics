@@ -1,0 +1,17 @@
+team_id,team_name,team_size,work_type
+1,Team A,5,Data
+2,Team B,11,Development
+3,Team C,10,Platform
+4,Team D,8,Testing
+5,Team E,8,Data
+6,Team F,11,Testing
+7,Team G,5,Development
+8,Team H,10,Platform
+9,Team I,6,Platform
+10,Team J,5,Data
+11,Team K,9,Testing
+12,Team L,12,Platform
+13,Team M,10,Data
+14,Team N,11,Testing
+15,Team O,10,Testing
+16,Team P,11,Development

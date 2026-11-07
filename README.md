@@ -1,85 +1,126 @@
-# PulseIQ — Day 1 ETL Pipeline
+# PulseIQ - Workforce Analytics Platform
 
-A runnable starter project for the Phase 1, Day 1 task. It loads sample HR CSV feeds into DuckDB, validates each column against `data_contracts.json`, stores accepted records in clean tables, sends invalid records to `quarantine`, and writes counts to `etl_summary`.
+## Project Overview
 
-> The included CSV files are sample data. If your course/task folder contains official PulseIQ files, replace the sample CSVs with those files and update the contract to match the official `README` and `data_contracts` sheets.
+PulseIQ is a workforce analytics platform developed using Python, Pandas, DuckDB and Streamlit. It processes workforce data, performs data quality validation, builds analytical data models, and provides dashboards for workforce and team productivity analysis.
 
-## Project structure
+This repository consolidates Phase 1, Phase 2 and Phase 3 of the project.
+
+**Note:** Some dashboards use synthetic sample data. Their results do not represent actual company performance.
+
+## Project Phases
+
+### Phase 1 - Data Engineering and Analytics Foundation
+- ETL pipeline using Python and Pandas.
+- Data cleaning and transformation.
+- Star-schema data warehouse using DuckDB.
+- Data quality validation using Pandera and SQL checks.
+- Governed metric layer with 28 metrics.
+
+### Phase 2 - Workforce and Team Analytics
+- Attendance and leave analytics.
+- Attrition analytics and risk prediction.
+- Team productivity dashboard.
+- Sprint velocity, cycle time and on-time delivery.
+- Blocked and reopened work analysis.
+
+### Phase 3 - Extended Analytics
+- Tasks 9-15 dashboards and analysis.
+- Department and payroll analytics.
+- Finance and operational analysis.
+- Forecasting and anomaly analysis.
+- Executive scorecard.
+
+## Project Structure
 
 ```text
 pulseiq/
-├── data/
-│   └── raw/
-│       ├── employees.csv
-│       ├── salaries.csv
-│       ├── attendance.csv
-│       ├── leave.csv
-│       └── payroll.csv
-├── docs/
-│   └── contract_notes.md
-├── data_contracts.json
-├── load_to_duckdb.py
-├── etl.py
-├── requirements.txt
-├── .gitignore
-└── README.md
+â”œâ”€â”€ README.md
+â”œâ”€â”€ requirements.txt
+â”œâ”€â”€ app.py
+â”œâ”€â”€ phase-1/
+â”œâ”€â”€ phase-2/
+â”œâ”€â”€ phase-3/
+â”œâ”€â”€ data/
+â”‚   â”œâ”€â”€ raw/
+â”‚   â”œâ”€â”€ external/
+â”‚   â””â”€â”€ task8/
+â”œâ”€â”€ models/
+â”œâ”€â”€ outputs/
+â””â”€â”€ pages/
 ```
 
-## Requirements
+## Technologies Used
 
-- Python 3.11+
-- PowerShell / terminal
-- Optional: Git and a GitHub account
+- Python
+- Pandas
+- DuckDB
+- Streamlit
+- Pandera
+- Scikit-learn
+- Joblib
+- SQL
+- Git and GitHub
 
-## Run on Windows PowerShell
+## Installation
 
-Open a terminal inside this project folder:
+Clone or open the existing project repository.
+
+Activate the virtual environment:
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
+```
+
+Install dependencies:
+
+```powershell
 python -m pip install -r requirements.txt
-python load_to_duckdb.py
-python etl.py
 ```
 
-Run `python etl.py` a second time to test re-runnability. The clean tables, quarantine table, and summary table are replaced each run, so repeated runs do not append duplicate rows.
+## Running the Project
 
-## Tables created in `pulseiq.duckdb`
-
-- `raw_employees`, `raw_salaries`, `raw_attendance`, `raw_leave`, `raw_payroll`: raw loaded input
-- `employees`, `salaries`, `attendance`, `leave`, `payroll`: validated rows
-- `quarantine`: invalid rows and rejection reasons
-- `etl_summary`: per-feed input/pass/quarantine counts
-
-## Inspect results with Python
-
-You can use the DuckDB Python package:
+Run the main application:
 
 ```powershell
-python -c "import duckdb; c=duckdb.connect('pulseiq.duckdb', read_only=True); print(c.sql('SELECT * FROM etl_summary').df()); print(c.sql('SELECT * FROM quarantine').df()); c.close()"
+python -m streamlit run app.py
 ```
 
-## Validation behavior
-
-- Required values, types, numeric limits, allowed values, and selected uniqueness rules are checked.
-- Leave end dates cannot be earlier than start dates.
-- Payroll net pay must equal gross pay minus deductions (tolerance 0.01).
-- Missing required columns stop the run because the feed cannot be validated.
-- Unexpected columns generate a warning and quarantine the feed rows for review rather than silently ignoring the new field.
-- Every row is either passed or quarantined; the pipeline asserts that `rows_in = rows_passed + rows_quarantined`.
-
-## Git setup
-
-Create a private repository named `pulseiq` on GitHub, then run these commands after configuring your Git identity and remote:
+Run the Phase 2 dashboards:
 
 ```powershell
-git init
-git add .
-git commit -m "Set up PulseIQ ETL pipeline"
-git branch -M main
-git remote add origin YOUR_PRIVATE_GITHUB_REPOSITORY_URL
-git push -u origin main
+python -m streamlit run phase-2\task6_dashboard.py
+python -m streamlit run phase-2\task7_dashboard.py
+python -m streamlit run phase-2\task8_dashboard.py
 ```
 
-Do not commit passwords, tokens, `.venv`, or personal/confidential data.
+Run the Phase 3 dashboards individually:
+
+```powershell
+python -m streamlit run phase-3\task9_dashboard.py
+```
+
+Replace the dashboard filename to run another Phase 3 dashboard.
+
+## Phase 1 Verification
+
+```powershell
+python phase-1\dq_checks.py
+python phase-1\build_metrics.py
+python phase-1\test_dq_checks.py
+```
+
+## Data and Privacy
+
+- Sample data is used for demonstration and testing.
+- Do not upload confidential employee information, passwords, API keys or `.env` files.
+- Local DuckDB database files and virtual environments are excluded from Git.
+
+## Future Work
+
+Phase 4 will be added to this same repository after its official release.
+
+## Repository
+
+This repository contains the consolidated PulseIQ project for review.

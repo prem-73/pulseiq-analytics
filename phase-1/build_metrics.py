@@ -1,8 +1,8 @@
-from pathlib import Path
+﻿from pathlib import Path
 import duckdb
-ROOT=Path(__file__).resolve().parent
+ROOT=Path(__file__).resolve().parents[1]
 DB=ROOT/'pulseiq.duckdb'
-SQL=ROOT/'metric_views.sql'
+SQL=Path(__file__).resolve().parent/'metric_views.sql'
 def main():
  if not DB.exists(): raise SystemExit('pulseiq.duckdb missing. Run Tasks 1 and 2 first.')
  con=duckdb.connect(str(DB))
@@ -19,3 +19,5 @@ def main():
   print('PASS: all 28 metric views execute.')
  finally: con.close()
 if __name__=='__main__': main()
+
+

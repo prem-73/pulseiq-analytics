@@ -1,11 +1,11 @@
-from pathlib import Path
+﻿from pathlib import Path
 import json
 import math
 import re
 from datetime import date, datetime
 import duckdb
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data" / "raw"
 CONTRACT_PATH = ROOT / "data_contracts.json"
 DB_PATH = ROOT / "pulseiq.duckdb"
@@ -181,3 +181,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

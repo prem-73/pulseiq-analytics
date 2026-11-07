@@ -1,7 +1,7 @@
-from pathlib import Path
+﻿from pathlib import Path
 import duckdb
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data" / "raw"
 DB_PATH = ROOT / "pulseiq.duckdb"
 
@@ -23,3 +23,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

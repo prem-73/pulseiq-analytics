@@ -1,4 +1,4 @@
-.venv/
+﻿.venv/
 __pycache__/
 *.py[cod]
 *.duckdb
@@ -7,9 +7,7 @@ __pycache__/
 .vscode/
 .DS_Store
 
-data/external/
 
-data/task8/
 
 unlock_PQ-09_reconciliation_answer_key.csv
 # Financial and source data

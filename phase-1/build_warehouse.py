@@ -1,9 +1,9 @@
-from pathlib import Path
+﻿from pathlib import Path
 from datetime import date
 import pandas as pd
 import duckdb
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[1]
 DB = ROOT / "pulseiq.duckdb"
 HISTORY = ROOT / "data" / "employee_history.csv"
 
@@ -164,3 +164,4 @@ def main():
 
 if __name__=="__main__":
     main()
+
